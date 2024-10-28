@@ -259,7 +259,8 @@ def view3d_paste_reference_imageaddmenu_draw(self, _context):
 @bpy.app.handlers.persistent
 def move_to_save_directory_handler(_self, _context):
     """Handler to move the images to the save directory after the file is saved."""
-    bpy.ops.imagepaste.move_to_save_directory("INVOKE_DEFAULT")
+    if bpy.ops.imagepaste.move_to_save_directory.poll():
+        bpy.ops.imagepaste.move_to_save_directory("INVOKE_DEFAULT")
 
 
 addon_keymaps = []
