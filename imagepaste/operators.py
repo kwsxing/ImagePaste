@@ -14,6 +14,20 @@ else:
 import bpy
 
 
+# override the api
+def bpy_ops_import_image_to_plane(*args, **kwargs):
+    if bpy.app.version[0] < 4 or (bpy.app.version[0] == 4 and bpy.app.version[1] < 2):
+        return bpy.ops.import_image.to_plane(*args, **kwargs)
+    # the latest api
+    return bpy.ops.image.import_as_mesh_planes(*args, **kwargs)
+
+def bpy_ops_object_load_reference_image(*args, **kwargs):
+    if bpy.app.version[0] < 4 or (bpy.app.version[0] == 4 and bpy.app.version[1] < 2):
+        return bpy.ops.object.load_reference_image(*args, **kwargs)
+    # the latest api
+    return bpy.ops.object.empty_image_add(*args, **kwargs)
+
+
 class IMAGEPASTE_OT_imageeditor_copy(bpy.types.Operator):
     """Copy image to the clipboard"""
 
@@ -158,7 +172,7 @@ class IMAGEPASTE_OT_view3d_paste_plane(bpy.types.Operator):
         if clipboard.report.type != "INFO":
             return {"CANCELLED"}
         for image in clipboard.images:
-            bpy.ops.import_image.to_plane(files=[{"name": image.filepath}])
+            bpy_ops_import_image_to_plane(files=[{"name": image.filepath}])
         return {"FINISHED"}
 
     @classmethod
@@ -185,7 +199,7 @@ class IMAGEPASTE_OT_view3d_paste_reference(bpy.types.Operator):
         if clipboard.report.type != "INFO":
             return {"CANCELLED"}
         for image in clipboard.images:
-            bpy.ops.object.load_reference_image(filepath=image.filepath)
+            bpy_ops_object_load_reference_image(filepath=image.filepath)
         return {"FINISHED"}
 
     @classmethod
